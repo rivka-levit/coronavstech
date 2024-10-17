@@ -105,3 +105,15 @@ class TestPostCompanies(BasicCompanyAPITestCase):
         self.assertEqual(r.status_code, status.HTTP_201_CREATED)
         self.assertEqual(r.data['name'], payload['name'])
         self.assertEqual(r.data['status'], payload['status'])
+
+    def test_create_company_with_wrong_status_fails(self) -> None:
+        """Test creating a company with a wrong status fails."""
+
+        payload = {'name': 'test company name', 'status': 'Wrong'}
+        r = self.client.post(self.list_url, data=payload)
+
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            r.data['status'],
+            [f'"{payload['status']}" is not a valid choice.']
+        )
