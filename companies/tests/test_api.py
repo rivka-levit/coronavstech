@@ -4,6 +4,7 @@ Commands:
     - pytest -v
     - pytest -v -s (to see what was printed out)
     - pytest -v --durations=0 -vv (to see the duration of every test)
+    - pytest -k [name_of_test_function] (to run selected tests)
 """
 
 import json
@@ -126,3 +127,15 @@ class TestPostCompanies(BasicCompanyAPITestCase):
     @pytest.mark.skip
     def test_should_be_skipped(self) -> None:
         self.assertEqual(1, 2)
+
+
+
+def raise_covid19_exception():
+    raise ValueError('Coronavirus Exception')
+
+
+def test_raise_covid19_exception_should_pass() -> None:
+    with pytest.raises(ValueError) as ex:
+        raise_covid19_exception()
+
+    assert str(ex.value) == 'Coronavirus Exception'
