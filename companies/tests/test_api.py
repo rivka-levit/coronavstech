@@ -3,10 +3,11 @@ Tests for Company app API
 Commands:
     - pytest -v
     - pytest -v -s (to see what was printed out)
+    - pytest -v --durations=0 -vv (to see the duration of every test)
 """
 
 import json
-# import pytest
+import pytest
 
 from django.test import Client, TestCase
 from django.urls import reverse
@@ -117,3 +118,11 @@ class TestPostCompanies(BasicCompanyAPITestCase):
             r.data['status'],
             [f'"{payload['status']}" is not a valid choice.']
         )
+
+    @pytest.mark.xfail
+    def test_should_be_ok_if_fails(self) -> None:
+        self.assertEqual(1, 2)
+
+    @pytest.mark.skip
+    def test_should_be_skipped(self) -> None:
+        self.assertEqual(1, 2)
