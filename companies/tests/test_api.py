@@ -74,3 +74,34 @@ class TestPostCompanies(BasicCompanyAPITestCase):
             r.data['name'],
             ['company with this name already exists.']
         )
+
+    def test_create_company_with_name_set_default_fields(self) -> None:
+        """
+        Test creating a company with only name successful and set default
+        fields for the rest of data.
+        """
+
+        payload = {'name': 'test company name'}
+        expected_default = {
+            'status': 'Hiring',
+            'app_link': '',
+            'notes': '',
+        }
+
+        r = self.client.post(self.list_url, data=payload)
+
+        self.assertEqual(r.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(r.data['name'], payload['name'])
+        self.assertEqual(r.data['status'], expected_default['status'])
+        self.assertEqual(r.data['app_link'], expected_default['app_link'])
+        self.assertEqual(r.data['notes'], expected_default['notes'])
+
+    def test_create_company_with_layoffs_status_success(self) -> None:
+        """Test creating a company with layoffs status succeeds."""
+
+        payload = {'name': 'test company name', 'status': 'Layoffs'}
+        r = self.client.post(self.list_url, data=payload)
+
+        self.assertEqual(r.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(r.data['name'], payload['name'])
+        self.assertEqual(r.data['status'], payload['status'])
