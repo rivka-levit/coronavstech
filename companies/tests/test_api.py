@@ -61,3 +61,16 @@ class TestPostCompanies(BasicCompanyAPITestCase):
 
         self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(r.data['name'], ['This field is required.'])
+
+    def test_create_existing_company_fails(self) -> None:
+        """Test creating a company with an existing name fails."""
+
+        Company.objects.create(name='Amazon')
+        payload = {'name': 'Amazon'}
+        r = self.client.post(self.list_url, data=payload)
+
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            r.data['name'],
+            ['company with this name already exists.']
+        )
