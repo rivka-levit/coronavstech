@@ -17,11 +17,16 @@ from companies.models import Company
 
 
 # @pytest.mark.django_db
-class TestGetCompanies(TestCase):
+class BasicCompanyAPITestCase(TestCase):
     def setUp(self):
         self.client = Client()
         self.list_url = reverse('companies-list')
 
+    def tearDown(self):
+        pass
+
+
+class TestGetCompanies(BasicCompanyAPITestCase):
     def test_zero_companies_should_return_empty_list(self) -> None:
         """
         Test GET request returns empty list if there are no companies
@@ -45,3 +50,14 @@ class TestGetCompanies(TestCase):
         self.assertEqual(r.data[0]['status'], amazon.status)
         self.assertEqual(r.data[0]['app_link'], amazon.app_link)
         self.assertEqual(r.data[0]['notes'], amazon.notes)
+
+
+class TestPostCompanies(BasicCompanyAPITestCase):
+    def test_create_company_without_arguments_fails(self) -> None:
+        """Test creating a company with no arguments fails."""
+
+        payload = {}
+        r = self.client.post(self.list_url, data=payload)
+
+        self.assertEqual(r.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(r.data['name'], ['This field is required.'])
