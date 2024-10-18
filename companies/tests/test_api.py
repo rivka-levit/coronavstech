@@ -1,5 +1,5 @@
 """
-Tests for Company app API
+Tests for Company app API in unittest style
 Commands:
     - pytest -v
     - pytest -v -s (to see what was printed out)
