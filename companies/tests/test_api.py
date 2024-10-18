@@ -1,6 +1,8 @@
 """
 Tests for Company app API in unittest style
 Commands:
+    - python manage.py test companies.tests.test_api
+OR
     - pytest -v
     - pytest -v -s (to see what was printed out)
     - pytest -v --durations=0 -vv (to see the duration of every test)
