@@ -14,7 +14,6 @@ from unittest.mock import patch
 import os
 import json
 
-from time import sleep
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -34,7 +33,6 @@ class EmailUnitTest(TestCase):
                 fail_silently=False
             )
 
-            sleep(2)
             self.assertEqual(len(mail.outbox), 1)
             self.assertEqual(mail.outbox[0].subject, 'Test Subject')
 
