@@ -20,4 +20,4 @@ jobs:
         env:
           DJANGO_SECRET_KEY: ${{ secrets.SECRET_KEY }}
         run: |
-          pytest -v
+          pytest -v -s --durations=0
