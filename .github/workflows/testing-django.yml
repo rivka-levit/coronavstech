@@ -20,5 +20,7 @@ jobs:
       - name: Test with pytest
         env:
           DJANGO_SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
+          RECEIVER_EMAIL: ${{ secrets.RECEIVER_EMAIL }}
         run: |
           pytest -v -s --durations=0
