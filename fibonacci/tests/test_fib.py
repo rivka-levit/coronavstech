@@ -6,27 +6,28 @@ Commands:
 """
 import pytest
 
+from collections.abc import Callable
+
 from fibonacci.naive import fibonacci_naive
 from fibonacci.cached import fibonacci_cached
 
 
+@pytest.mark.parametrize('fib_fn', [fibonacci_naive, fibonacci_cached])
 @pytest.mark.parametrize('n, expected', [(0, 0), (1, 1), (2, 1), (7, 13)])
-def test_fib_naive(n: int, expected: int) -> None:
-    res = fibonacci_naive(n=n)
+def test_fib(fib_fn: Callable, n: int, expected: int) -> None:
+    res = fib_fn(n)
     assert res == expected
 
-
-def test_fib_naive_negative_raises_error() -> None:
+@pytest.mark.parametrize('fib_fn', [fibonacci_naive, fibonacci_cached])
+def test_fib_naive_negative_raises_error(fib_fn: Callable) -> None:
     with pytest.raises(ValueError) as e:
-        fibonacci_naive(-5)
+        fib_fn(-5)
         assert str(e) == "Fibonacci number must be greater than 0."
 
 
 @pytest.mark.parametrize('n, expected', [
-    (0, 0),
-    (1, 1),
     (125, 59425114757512643212875125),
     (258, 370959230771131880927453318055001997489772178180790104)])
-def test_fib_cached(n: int, expected: int) -> None:
+def test_fib_cached_big_numbers(n: int, expected: int) -> None:
     res = fibonacci_cached(n=n)
     assert res == expected

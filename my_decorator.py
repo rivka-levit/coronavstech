@@ -1,5 +1,6 @@
 import re
 from typing import Any, Callable
+from functools import wraps
 
 
 def get_list_of_kwargs_for_function(
@@ -37,6 +38,7 @@ def my_parametrize(
 def cache_fib(fn: Callable) -> Callable:
     cache = dict()
 
+    @wraps(fn)
     def wrapper(n) -> Callable:
         if n in cache:
             return cache[n]

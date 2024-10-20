@@ -2,7 +2,7 @@ from my_decorator import cache_fib
 
 
 @cache_fib
-def fibonacci_cached(n):
+def fibonacci_cached(n: int) -> int:
     if n < 0:
         raise ValueError("Fibonacci number must be greater than 0.")
     if n == 0 or n == 1:
