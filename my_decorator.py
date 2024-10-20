@@ -32,3 +32,16 @@ def my_parametrize(
 
         return wrapper
     return decorator
+
+
+def cache_fib(fn: Callable) -> Callable:
+    cache = dict()
+
+    def wrapper(n) -> Callable:
+        if n in cache:
+            return cache[n]
+        result = fn(n)
+        cache[n] = result
+
+        return result
+    return wrapper
