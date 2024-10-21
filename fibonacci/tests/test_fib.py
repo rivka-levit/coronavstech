@@ -11,12 +11,13 @@ from collections.abc import Callable
 from fibonacci.naive import fibonacci_naive
 from fibonacci.cached import fibonacci_cached
 from fibonacci.dynamic import fibonacci_dynamic
+from fibonacci.dynamic import fibonacci_dynamic_v2
 from fixtures import time_tracker
 
 
 @pytest.mark.parametrize(
     'fib_fn',
-    [fibonacci_naive, fibonacci_cached, fibonacci_dynamic]
+    [fibonacci_naive, fibonacci_cached, fibonacci_dynamic, fibonacci_dynamic_v2]
 )
 @pytest.mark.parametrize('n, expected', [(0, 0), (1, 1), (2, 1), (19, 4181)])
 def test_fib(time_tracker, fib_fn: Callable, n: int, expected: int) -> None:
