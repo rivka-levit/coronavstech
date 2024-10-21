@@ -10,6 +10,7 @@ from collections.abc import Callable
 
 from fibonacci.naive import fibonacci_naive
 from fibonacci.cached import fibonacci_cached
+from fixtures import time_tracker
 
 
 @pytest.mark.parametrize('fib_fn', [fibonacci_naive, fibonacci_cached])
@@ -19,7 +20,7 @@ def test_fib(fib_fn: Callable, n: int, expected: int) -> None:
     assert res == expected
 
 @pytest.mark.parametrize('fib_fn', [fibonacci_naive, fibonacci_cached])
-def test_fib_naive_negative_raises_error(fib_fn: Callable) -> None:
+def test_fib_naive_negative_raises_error(time_tracker, fib_fn: Callable) -> None:
     with pytest.raises(ValueError) as e:
         fib_fn(-5)
         assert str(e) == "Fibonacci number must be greater than 0."
@@ -28,6 +29,6 @@ def test_fib_naive_negative_raises_error(fib_fn: Callable) -> None:
 @pytest.mark.parametrize('n, expected', [
     (125, 59425114757512643212875125),
     (258, 370959230771131880927453318055001997489772178180790104)])
-def test_fib_cached_big_numbers(n: int, expected: int) -> None:
+def test_fib_cached_big_numbers(time_tracker, n: int, expected: int) -> None:
     res = fibonacci_cached(n=n)
     assert res == expected
