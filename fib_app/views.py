@@ -13,35 +13,35 @@ class FibonacciView(APIView):
 
         if not n:
             return Response({
-                'error_code': status.HTTP_400_BAD_REQUEST,
-                'error_message': '`n` parameter is required'
-            })
+                'status': 'error',
+                'message': '`n` parameter is required'
+            }, status=status.HTTP_400_BAD_REQUEST)
         else:
             try:
                 n = int(n)
             except ValueError:
                 return Response({
-                    'error_code': status.HTTP_400_BAD_REQUEST,
-                    'error_message': '`n` must be an integer'
+                    'status': 'error',
+                    'message': '`n` must be an integer'
                 })
 
         try:
             fib_number = fibonacci_dynamic_v2(n)
         except ValueError as e:
             rp.update({
-                'error_code': status.HTTP_400_BAD_REQUEST,
-                'error_message': str(e)
+                'status': 'error',
+                'message': str(e)
             })
         except Exception as e:
             rp.update({
-                'error_code': status.HTTP_500_INTERNAL_SERVER_ERROR,
-                'error_message': str(e)
+                'status': 'error',
+                'message': str(e)
             })
         else:
             rp.update({
-                'status': status.HTTP_200_OK,
+                'status': 'success',
                 'n_requested': n,
                 'fibonacci_number': fib_number
             })
 
-        return Response(rp)
+        return Response(rp, status=status.HTTP_200_OK)
