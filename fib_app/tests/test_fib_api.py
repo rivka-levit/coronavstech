@@ -55,3 +55,12 @@ def test_get_with_negative_arg_fail(client) -> None:
     assert r.status_code == status.HTTP_400_BAD_REQUEST
     assert r.data['status'] == 'error'
     assert r.data['message'] == 'Number must be positive.'
+
+
+def test_post_method_not_allowed(client) -> None:
+    """Test post request to fibonacci endpoint fails."""
+
+    r = client.post(f'{BASE_FIB_URL}?n=1')
+
+    assert r.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
+    assert r.data['detail'] == 'Method "POST" not allowed.'
