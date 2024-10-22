@@ -14,6 +14,8 @@ from rest_framework import status
 
 from companies.models import Company
 
+from collections.abc import Callable
+
 
 COMPANIES_LIST = reverse('companies-list')
 pytestmark = pytest.mark.django_db  # decorator for all the functions in the file
@@ -32,10 +34,14 @@ def test_zero_companies_should_return_empty_list(client) -> None:
     assert r.data == []
 
 
-def test_one_company_exists_should_succeed(client) -> None:
+@pytest.fixture
+def amazon() -> Company:
+    return Company.objects.create(name='Amazon')
+
+
+def test_one_company_exists_should_succeed(client, amazon) -> None:
     """Test GET request returns one company if one company exists."""
 
-    amazon = Company.objects.create(name='Amazon')
     r = client.get(COMPANIES_LIST)
 
     assert r.status_code == status.HTTP_200_OK
@@ -110,3 +116,30 @@ def test_create_company_with_wrong_status_fails(client) -> None:
     assert r.status_code == status.HTTP_400_BAD_REQUEST
     assert 'is not a valid choice' in str(r.content)
     # assert r.data['status'] == [f'"{payload['status']}" is not a valid choice.']
+
+# -------------- Learn about fixtures tests ---------------------
+
+@pytest.fixture
+def company(**kwargs) -> Callable:
+    def _company_factory(**kwargs):
+        company_name = kwargs.pop('name', 'Test Company INC')
+        return Company.objects.create(name=company_name, **kwargs)
+    return _company_factory
+
+
+def test_multiple_companies_exist_success(client, company) -> None:
+    """Test creating multiple companies successfully."""
+
+    twitch = company(name='Twitch')
+    tiktok = company(name='Tiktok')
+    test_company = company()
+    company_names = {twitch.name, tiktok.name, test_company.name}
+    response_companies = client.get(COMPANIES_LIST).json()
+
+    assert len(company_names) == len(response_companies)
+
+    response_company_names = set(
+        map(lambda cny: cny.get('name'), response_companies)
+    )
+
+    assert company_names == response_company_names
