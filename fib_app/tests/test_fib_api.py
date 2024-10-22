@@ -35,26 +35,26 @@ def test_get_without_arg_fail(client) -> None:
     assert r.data['message'] == '`n` parameter is required'
 
 
-def test_get_arg_not_integer_fail(client) -> None:
-    """Test get request with `n` not an integer fails."""
+@pytest.mark.parametrize(
+    argnames='n, msg',
+    argvalues=[
+        ('abc', '`n` must be an integer'),
+        (3.5, '`n` must be an integer'),
+        (-15, 'Number must be positive.')
+    ]
+)
+def test_fib_api_with_wrong_argument_fails(
+        client: pytest.fixture,
+        n: str | int | float,
+        msg: str) -> None:
+    """Test get request with wrong argument fails."""
 
-    wrong_arg = 'abc'
-    r = client.get(f'{BASE_FIB_URL}?n={wrong_arg}')
+    r = client.get(f'{BASE_FIB_URL}?n={n}')
 
     assert r.status_code == status.HTTP_400_BAD_REQUEST
     assert r.data['status'] == 'error'
-    assert r.data['message'] == '`n` must be an integer'
+    assert r.data['message'] == msg
 
-
-def test_get_with_negative_arg_fail(client) -> None:
-    """Test get request with negative `n` parameter fails."""
-
-    wrong_arg = -15
-    r = client.get(f'{BASE_FIB_URL}?n={wrong_arg}')
-
-    assert r.status_code == status.HTTP_400_BAD_REQUEST
-    assert r.data['status'] == 'error'
-    assert r.data['message'] == 'Number must be positive.'
 
 
 def test_post_method_not_allowed(client) -> None:
