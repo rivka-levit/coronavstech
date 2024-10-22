@@ -26,7 +26,7 @@ class FibonacciView(APIView):
                 })
 
         try:
-            fib_number = fibonacci_dynamic_v2(int(n))
+            fib_number = fibonacci_dynamic_v2(n)
         except ValueError as e:
             rp.update({
                 'error_code': status.HTTP_400_BAD_REQUEST,
@@ -40,7 +40,7 @@ class FibonacciView(APIView):
         else:
             rp.update({
                 'status': status.HTTP_200_OK,
-                'n_requested': int(n),
+                'n_requested': n,
                 'fibonacci_number': fib_number
             })
 
