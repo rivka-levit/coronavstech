@@ -8,6 +8,11 @@ def fibonacci_dynamic(n: int) -> int:
 
 
 def fibonacci_dynamic_v2(n: int) -> int:
+    if n < 0:
+        raise ValueError('Number must be positive.')
+    if n == 0 or n == 1:
+        return n
+
     fib_1, fib_2 = 0, 1
 
     for _ in range(1, n+1):
