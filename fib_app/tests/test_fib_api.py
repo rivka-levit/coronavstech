@@ -33,3 +33,25 @@ def test_get_without_arg_fail(client) -> None:
     assert r.status_code == status.HTTP_400_BAD_REQUEST
     assert r.data['status'] == 'error'
     assert r.data['message'] == '`n` parameter is required'
+
+
+def test_get_arg_not_integer_fail(client) -> None:
+    """Test get request with `n` not an integer fails."""
+
+    wrong_arg = 'abc'
+    r = client.get(f'{BASE_FIB_URL}?n={wrong_arg}')
+
+    assert r.status_code == status.HTTP_400_BAD_REQUEST
+    assert r.data['status'] == 'error'
+    assert r.data['message'] == '`n` must be an integer'
+
+
+def test_get_with_negative_arg_fail(client) -> None:
+    """Test get request with negative `n` parameter fails."""
+
+    wrong_arg = -15
+    r = client.get(f'{BASE_FIB_URL}?n={wrong_arg}')
+
+    assert r.status_code == status.HTTP_400_BAD_REQUEST
+    assert r.data['status'] == 'error'
+    assert r.data['message'] == 'Number must be positive.'
