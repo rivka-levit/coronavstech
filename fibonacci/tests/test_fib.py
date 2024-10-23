@@ -12,7 +12,7 @@ from fibonacci.naive import fibonacci_naive
 from fibonacci.cached import fibonacci_cached
 from fibonacci.dynamic import fibonacci_dynamic
 from fibonacci.dynamic import fibonacci_dynamic_v2
-from conftest import time_tracker
+from fibonacci.conftest import time_tracker
 
 
 @pytest.mark.parametrize(

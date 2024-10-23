@@ -5,7 +5,9 @@ Commands:
     - pytest -v -s (to see what was printed out)
     - pytest -v --durations=0 -vv (to see the duration of every test)
     - pytest -k [part_name_of_test_function] (to run selected tests)
+    - pytest companies\tests\test_api_pt.py
 """
+
 import pytest
 
 from django.urls import reverse
@@ -13,8 +15,6 @@ from django.urls import reverse
 from rest_framework import status
 
 from companies.models import Company
-
-from collections.abc import Callable
 
 
 COMPANIES_LIST = reverse('companies-list')
@@ -32,11 +32,6 @@ def test_zero_companies_should_return_empty_list(client) -> None:
 
     assert r.status_code == status.HTTP_200_OK
     assert r.data == []
-
-
-@pytest.fixture
-def amazon() -> Company:
-    return Company.objects.create(name='Amazon')
 
 
 def test_one_company_exists_should_succeed(client, amazon) -> None:
@@ -119,32 +114,13 @@ def test_create_company_with_wrong_status_fails(client) -> None:
 
 # -------------- Learn about fixtures tests ---------------------
 
-@pytest.fixture
-def companies(request, company) -> list[Company]:
-    companies_list = list()
-    names = request.param
-
-    for name in names:
-        companies_list.append(company(name=name))
-
-    return companies_list
-
-
-@pytest.fixture
-def company(**kwargs) -> Callable:
-    def _company_factory(**kwargs):
-        company_name = kwargs.pop('name', 'Test Company INC')
-        return Company.objects.create(name=company_name, **kwargs)
-    return _company_factory
-
-
 @pytest.mark.parametrize(
     'companies',
     [
         ['Twitch', 'Tiktok', 'Test Company INC'],
         ['Facebook', 'Instagram']
     ],
-    ids=['3 T Companies', 'Zack Companies'],
+    ids=['3 T Companies', "Zackerberg's Companies"],
     indirect=True
 )
 def test_multiple_companies_exist_success(client, companies) -> None:
