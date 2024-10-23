@@ -120,6 +120,17 @@ def test_create_company_with_wrong_status_fails(client) -> None:
 # -------------- Learn about fixtures tests ---------------------
 
 @pytest.fixture
+def companies(request, company) -> list[Company]:
+    companies_list = list()
+    names = request.param
+
+    for name in names:
+        companies_list.append(company(name=name))
+
+    return companies_list
+
+
+@pytest.fixture
 def company(**kwargs) -> Callable:
     def _company_factory(**kwargs):
         company_name = kwargs.pop('name', 'Test Company INC')
@@ -127,13 +138,19 @@ def company(**kwargs) -> Callable:
     return _company_factory
 
 
-def test_multiple_companies_exist_success(client, company) -> None:
+@pytest.mark.parametrize(
+    'companies',
+    [
+        ['Twitch', 'Tiktok', 'Test Company INC'],
+        ['Facebook', 'Instagram']
+    ],
+    ids=['3 T Companies', 'Zack Companies'],
+    indirect=True
+)
+def test_multiple_companies_exist_success(client, companies) -> None:
     """Test creating multiple companies successfully."""
 
-    twitch = company(name='Twitch')
-    tiktok = company(name='Tiktok')
-    test_company = company()
-    company_names = {twitch.name, tiktok.name, test_company.name}
+    company_names = set(map(lambda x: x.name, companies))
     response_companies = client.get(COMPANIES_LIST).json()
 
     assert len(company_names) == len(response_companies)
