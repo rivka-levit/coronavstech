@@ -23,4 +23,4 @@ jobs:
           SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
           RECEIVER_EMAIL: ${{ secrets.RECEIVER_EMAIL }}
         run: |
-          pytest -v -s --durations=0 --cov=. -m "not skip_in_ci"
+          pytest -v -s --durations=0 -m "not skip_in_ci"
