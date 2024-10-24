@@ -6,6 +6,7 @@ Command to run tests:   --> pytest companies\tests\test_generic_api.py
 Command to clean up db: --> python manage.py flush --no-input
 """
 
+import pytest
 import requests
 import json
 
@@ -20,6 +21,7 @@ def cleanup_company(company_id: str) -> None:
     assert r.status_code == 204
 
 
+@pytest.mark.skip_in_ci
 def test_zero_companies_django_agnostic() -> None:
     """
     Test GET request returns empty list if there are no companies
@@ -32,6 +34,7 @@ def test_zero_companies_django_agnostic() -> None:
     assert json.loads(r.content) == []
 
 
+@pytest.mark.skip_in_ci
 def test_create_company_with_layoffs_django_agnostic() -> None:
     """Test creating a company with layoffs status succeeds."""
 
