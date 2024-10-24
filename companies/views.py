@@ -36,7 +36,7 @@ def send_company_email(request: Request) -> Response:
             recipient_list=[os.environ.get('RECEIVER_EMAIL')],
         )
         payload = {'status': 'success', 'info': 'email sent successfully'}
+        return Response(payload, status=status.HTTP_200_OK)
     except (SMTPException, Exception) as e:
         payload = {'status': 'fail', 'info': str(e)}
-    finally:
-        return Response(payload)
+        return Response(payload, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
