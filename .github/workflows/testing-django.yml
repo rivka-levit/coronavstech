@@ -22,5 +22,6 @@ jobs:
           DJANGO_SECRET_KEY: ${{ secrets.SECRET_KEY }}
           SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
           RECEIVER_EMAIL: ${{ secrets.RECEIVER_EMAIL }}
+          ACCESS_KEY: ${{ secrets.ACCESS_KEY }}
         run: |
           pytest -v -s --durations=0 -m "not skip_in_ci"
