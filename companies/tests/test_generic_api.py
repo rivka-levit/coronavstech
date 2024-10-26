@@ -8,7 +8,13 @@ Command to clean up db: --> python manage.py flush --no-input
 
 import pytest
 import requests
+import responses
 import json
+import os
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 COMPANIES_LIST = 'http://127.0.0.1:8000/companies/'
@@ -47,3 +53,54 @@ def test_create_company_with_layoffs_django_agnostic() -> None:
     assert r_content['status'] == payload['status']
 
     cleanup_company(company_id=r_content['id'])
+
+
+@pytest.mark.change
+def test_exchangerate_api() -> None:
+    """Test exchangerate API call."""
+
+    cur1 = 'USD'
+    cur2 = 'ILS'
+    amount = 100
+    base_url = 'https://api.exchangerate.host/convert'
+    key = os.environ.get('ACCESS_KEY')
+
+    r = requests.get(
+        url=f'{base_url}?from={cur1}&to={cur2}&amount={amount}&access_key={key}'
+    )
+    response_json = r.json()
+    assert r.status_code == 200
+    assert 'query' in response_json
+    assert 'result' in response_json
+    assert response_json['query']['from'] == cur1
+    assert response_json['query']['to'] == cur2
+
+
+@pytest.mark.change
+@responses.activate
+def test_mocked_exchangerate_api() -> None:
+
+    cur1 = 'BLA'
+    cur2 = 'CLA'
+    amount = 100
+    base_url = 'https://api.exchangerate.host/convert'
+    key = os.environ.get('ACCESS_KEY')
+
+    responses.add(
+        responses.GET,
+        f'{base_url}?from={cur1}&to={cur2}&amount={amount}&access_key={key}',
+        json={"success":'true',"query":{"from":f"{cur1}","to":f"{cur2}","amount":100},
+              "quote":3.8,"result":380.0},
+        status=200,
+    )
+
+    r = requests.get(
+        url=f'{base_url}?from={cur1}&to={cur2}&amount={amount}&access_key={key}'
+    )
+    response_json = r.json()
+    assert r.status_code == 200
+    assert 'query' in response_json
+    assert response_json['query']['from'] == cur1
+    assert response_json['query']['to'] == cur2
+    assert response_json['quote'] == 3.8
+    assert response_json['result'] == 380.0
