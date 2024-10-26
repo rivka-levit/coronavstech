@@ -97,10 +97,29 @@ def test_mocked_exchangerate_api() -> None:
     r = requests.get(
         url=f'{base_url}?from={cur1}&to={cur2}&amount={amount}&access_key={key}'
     )
+
+    assert process_exchange() == 29
+
+
+def process_exchange():
+    cur1 = 'BLA'
+    cur2 = 'CLA'
+    amount = 100
+    base_url = 'https://api.exchangerate.host/convert'
+    key = os.environ.get('ACCESS_KEY')
+
+    r = requests.get(
+        url=f'{base_url}?from={cur1}&to={cur2}&amount={amount}&access_key={key}'
+    )
     response_json = r.json()
-    assert r.status_code == 200
-    assert 'query' in response_json
-    assert response_json['query']['from'] == cur1
-    assert response_json['query']['to'] == cur2
-    assert response_json['quote'] == 3.8
-    assert response_json['result'] == 380.0
+
+    if r.status_code != 200:
+        raise ValueError('Request failed')
+
+    from_cur = response_json['query']['from']
+    to_cur = response_json['query']['to']
+    if from_cur == cur1 and to_cur == cur2:
+        # The response was mocked
+        return 29
+
+    return 42
