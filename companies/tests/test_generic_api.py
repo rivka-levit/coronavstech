@@ -28,6 +28,7 @@ def cleanup_company(company_id: str) -> None:
 
 
 @pytest.mark.skip_in_ci
+@pytest.mark.skip(reason='Test needs host django server running')
 def test_zero_companies_django_agnostic() -> None:
     """
     Test GET request returns empty list if there are no companies
@@ -41,6 +42,7 @@ def test_zero_companies_django_agnostic() -> None:
 
 
 @pytest.mark.skip_in_ci
+@pytest.mark.skip(reason='Test needs host django server running')
 def test_create_company_with_layoffs_django_agnostic() -> None:
     """Test creating a company with layoffs status succeeds."""
 
@@ -92,10 +94,6 @@ def test_mocked_exchangerate_api() -> None:
         json={"success":'true',"query":{"from":f"{cur1}","to":f"{cur2}","amount":100},
               "quote":3.8,"result":380.0},
         status=200,
-    )
-
-    r = requests.get(
-        url=f'{base_url}?from={cur1}&to={cur2}&amount={amount}&access_key={key}'
     )
 
     assert process_exchange() == 29
