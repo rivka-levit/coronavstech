@@ -8,7 +8,7 @@ from django.core import mail
 
 from rest_framework import status
 
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 from smtplib import SMTPException
 
@@ -58,11 +58,14 @@ def test_send_email_with_get_method_fails(client):
     assert json.loads(r.content) == {'detail': 'Method "GET" not allowed.'}
 
 
+@patch('companies.views.send_mail', MagicMock(side_effect=SMTPException()))
 def test_smtp_error_response(client) -> None:
     """Test response 500 when sending an email raises SMTPException."""
 
-    with patch('companies.views.send_mail', side_effect=SMTPException()):
-        r = client.post(path=EMAIL_URL)
+    # with patch('companies.views.send_mail', MagicMock(side_effect=SMTPException())):
+    #     r = client.post(path=EMAIL_URL)
+
+    r = client.post(path=EMAIL_URL)
 
     assert r.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
     assert r.data['status'] == 'fail'

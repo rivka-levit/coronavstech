@@ -91,8 +91,10 @@ def test_mocked_exchangerate_api() -> None:
     responses.add(
         responses.GET,
         f'{base_url}?from={cur1}&to={cur2}&amount={amount}&access_key={key}',
-        json={"success":'true',"query":{"from":f"{cur1}","to":f"{cur2}","amount":100},
-              "quote":3.8,"result":380.0},
+        json={"success":'true',
+              "query":{"from":f"{cur1}","to":f"{cur2}","amount":100},
+              "quote":3.8,
+              "result":380.0},
         status=200,
     )
 
